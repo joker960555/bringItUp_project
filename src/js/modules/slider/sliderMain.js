@@ -1,9 +1,7 @@
-export default class Slider {
-    constructor (pageSel, buttonSel) {
-        this.page = document.querySelector(pageSel),
-        this.slides = this.page.children,
-        this.buttons = document.querySelectorAll(buttonSel),
-        this.slideIndex = 1;
+import Slider from './slider';
+export default class SliderMain extends Slider {
+    constructor (container) {
+        super(container);
     }
 
     render () {
@@ -64,3 +62,5 @@ export default class Slider {
         }
     }
 }
+
+
