@@ -1,6 +1,7 @@
 import SliderMain from './modules/slider/sliderMain';
 import SliderMini from './modules/slider/sliderMini';
 import Player from './modules/videoPlayer';
+import DifferenceCards from './modules/differenceBlock/differenceCards';
 
 window.addEventListener('DOMContentLoaded', () => {
     'use strict';
@@ -37,5 +38,18 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const player = new Player('.play__circle', '.overlay', '.close');
     player.play();
+
+    const oldCards = new DifferenceCards({
+        container: '.officerold',
+        cards: '.officer__card-item',
+        trigger: '.plus'
+    });
+    oldCards.render();
+    const newCards = new DifferenceCards({
+        container: '.officernew',
+        cards: '.officer__card-item',
+        trigger: '.plus'
+    });
+    newCards.render();
 
 });

@@ -2763,6 +2763,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_slider_sliderMain__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/slider/sliderMain */ "./src/js/modules/slider/sliderMain.js");
 /* harmony import */ var _modules_slider_sliderMini__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider/sliderMini */ "./src/js/modules/slider/sliderMini.js");
 /* harmony import */ var _modules_videoPlayer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/videoPlayer */ "./src/js/modules/videoPlayer.js");
+/* harmony import */ var _modules_differenceBlock_differenceCards__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/differenceBlock/differenceCards */ "./src/js/modules/differenceBlock/differenceCards.js");
+
 
 
 
@@ -2800,7 +2802,103 @@ window.addEventListener('DOMContentLoaded', function () {
   sliderMiniFeed.render();
   var player = new _modules_videoPlayer__WEBPACK_IMPORTED_MODULE_2__["default"]('.play__circle', '.overlay', '.close');
   player.play();
+  var oldCards = new _modules_differenceBlock_differenceCards__WEBPACK_IMPORTED_MODULE_3__["default"]({
+    container: '.officerold',
+    cards: '.officer__card-item',
+    trigger: '.plus'
+  });
+  oldCards.render();
+  var newCards = new _modules_differenceBlock_differenceCards__WEBPACK_IMPORTED_MODULE_3__["default"]({
+    container: '.officernew',
+    cards: '.officer__card-item',
+    trigger: '.plus'
+  });
+  newCards.render();
 });
+
+/***/ }),
+
+/***/ "./src/js/modules/differenceBlock/differenceCards.js":
+/*!***********************************************************!*\
+  !*** ./src/js/modules/differenceBlock/differenceCards.js ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return DifferenceCards; });
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var DifferenceCards =
+/*#__PURE__*/
+function () {
+  function DifferenceCards() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref$container = _ref.container,
+        container = _ref$container === void 0 ? null : _ref$container,
+        _ref$cards = _ref.cards,
+        cards = _ref$cards === void 0 ? null : _ref$cards,
+        _ref$trigger = _ref.trigger,
+        trigger = _ref$trigger === void 0 ? null : _ref$trigger;
+
+    _classCallCheck(this, DifferenceCards);
+
+    this.container = document.querySelector(container);
+    this.cards = this.container.querySelectorAll(cards);
+    this.addCard = this.container.lastElementChild;
+    this.trigger = this.container.querySelector(trigger);
+  }
+
+  _createClass(DifferenceCards, [{
+    key: "render",
+    value: function render() {
+      this.hideCards();
+      this.triggerCard();
+    }
+  }, {
+    key: "hideCards",
+    value: function hideCards() {
+      this.cards.forEach(function (item) {
+        return item.style.display = 'none';
+      });
+      this.addCard.style.display = 'flex';
+    }
+  }, {
+    key: "triggerCard",
+    value: function triggerCard() {
+      var _this = this;
+
+      this.trigger.addEventListener('click', function () {
+        for (var i = 0; i < _this.cards.length - 1; i++) {
+          if (getComputedStyle(_this.cards[i]).display === 'none') {
+            _this.cards[i].style.display = 'flex';
+
+            _this.cards[i].classList.add('animated', 'fadeIn');
+
+            if (i === _this.cards.length - 2) {
+              _this.addCard.style.display = 'none';
+            }
+
+            break;
+          }
+        }
+      });
+    }
+  }]);
+
+  return DifferenceCards;
+}();
+
+
 
 /***/ }),
 
