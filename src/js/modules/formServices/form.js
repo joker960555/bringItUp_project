@@ -12,14 +12,17 @@ export default class Form {
         this.trigger = this.form.querySelector(trigger);
         this.message = {
             loading: "Wait, untill it's done!",
+            empty: "Please, fill the empty fields!",
             success: "Congrats, you have succeded!",
             failure: "Oops, something went wrong!"
         };
+        this.stopSubmit = false;
 
     }
 
     render () {
         this.submitData();
+        this.blurFocusAlerts();
     }
 
     createMessageBlock (result) {
@@ -42,6 +45,55 @@ export default class Form {
             this.messageBlock.style.display = 'block';
             this.trigger.style.display = 'none';
         }
+        setTimeout(() => {
+            this.messageBlock.remove();
+            this.trigger.style.display = 'inline-block';
+            this.trigger.classList.add('animated', 'fadeIn');
+            try {
+                this.trigger.nextElementSibling.style.display = 'block';
+            } catch (e) {}
+        }, 3000);
+    }
+
+    blurFocusAlerts () {
+        this.inputs.forEach(input => {
+            input.addEventListener('blur', (e) => {
+                if (e.target && e.target.value === '' && !e.target.classList.contains('empty')) {
+                    e.target.value = this.message.empty;
+                    e.target.style.border = 'thick solid red';
+                    e.target.style.backgroundColor = 'rgba(255, 0, 0, 0.4)';
+                    e.target.classList.add('empty');
+                }
+            });
+            input.addEventListener('focus', (e) => {
+                if ((e.target && e.target.classList.contains('empty'))) {
+                    e.target.classList.remove('empty');
+                    e.target.style.border = 'none';
+                    e.target.style.backgroundColor = '';
+                    e.target.value = '';
+                }
+            });
+        });
+    }
+
+    emptyFormSubmitAlerts () {
+        let counter = 0;
+        for (let i = 0; i <= this.inputs.length - 1; i++) {
+            if (this.inputs[i].value === '') {
+                this.inputs[i].style.border = 'thick solid red';
+                this.inputs[i].style.backgroundColor = 'rgba(255, 0, 0, 0.4)';
+                this.inputs[i].classList.add('empty');
+                this.stopSubmit = true;
+            }
+            if (this.inputs[i].value !== '') {
+                counter++;
+                console.log(counter, i);
+                if (this.inputs.length === counter) {
+                    console.log(777, counter);
+                    this.stopSubmit = false;
+                }
+            }
+        }
     }
 
     submitData () {
@@ -57,6 +109,12 @@ export default class Form {
                 }
             });
             this.createMessageBlock(this.message.loading);
+            this.emptyFormSubmitAlerts();
+            if (this.stopSubmit === true) {
+                this.createMessageBlock(this.message.empty);
+                return; 
+            }
+
             this.form.reset();
 
             this.requestResponseData('assets/question.php', formData)
@@ -67,15 +125,7 @@ export default class Form {
             .catch(e => {
                 this.createMessageBlock(this.message.failure);
                 console.error(e);
-            })
-            .finally(() => setTimeout(() => {
-                this.messageBlock.remove();
-                this.trigger.style.display = 'inline-block';
-                this.trigger.classList.add('animated', 'fadeIn');
-                try {
-                    this.trigger.nextElementSibling.style.display = 'block';
-                } catch (e) {}
-            }, 3000));
+            });
         });
     }
 
