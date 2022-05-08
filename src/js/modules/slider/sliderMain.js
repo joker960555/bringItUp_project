@@ -1,12 +1,17 @@
 import Slider from './slider';
 export default class SliderMain extends Slider {
-    constructor (container) {
-        super(container);
+    constructor (container, slides, slideIndex, buttons, buttonsNext,
+        buttonsPrev, firstPageToggle) {
+        super(container, slides, slideIndex, buttons, buttonsNext,
+            buttonsPrev, firstPageToggle);
     }
 
     render () {
-        this.showSlides();
-        this.nextSlide(1);
+        try {
+            this.showSlides();
+            this.changeSlide(1);
+            this.toggleToFirstSlide();
+        }catch(e){}
     }
 
     showSlides (n) {
@@ -26,40 +31,57 @@ export default class SliderMain extends Slider {
         this.slides[this.slideIndex - 1].classList.add('animated', 'fadeIn');
     }
 
-    nextSlide (n) {
+    changeSlide (n) {
         this.buttons.forEach(item => {
             item.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.showSlides(this.slideIndex += n);
-                try {
-                    this.showAdvBlock();
-                } catch (e) {}
-            });
-
-            item.parentNode.previousElementSibling.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (e.target) {
-                    this.slideIndex = 1;
-                    this.showSlides();
-                }
+                    e.preventDefault();
+                    this.showSlides(this.slideIndex += n);
+                    if (this.adv) {
+                        this.showAdvBlock();
+                    }
             });
         });
-
+        if (this.buttonsNext && this.buttonsPrev) {
+            this.buttonsNext.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showSlides(this.slideIndex += n);
+                });
+            });
+            this.buttonsPrev.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showSlides(this.slideIndex -= n);
+                });
+            });
+        }
     }
 
+    toggleToFirstSlide () {
+        this.firstPageToggle.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                    if (e.target) {
+                        this.slideIndex = 1;
+                        this.showSlides();
+                    }
+            });
+        });
+    }
+    
     showAdvBlock () {
             this.adv = document.querySelector('.hanson');
 
-        if (this.slideIndex === 3) {
-            this.timeout = setTimeout(() => {
-                this.adv.style.display = 'block';
-                this.adv.classList.add('animated', 'fadeInUp');
-            }, 3000);
-        } else {
-            clearTimeout(this.timeout);
-            this.adv.style.display = 'none';
-            this.adv.classList.remove('animated', 'fadeInUp');
-        }
+            if (this.slideIndex === 3) {
+                this.timeout = setTimeout(() => {
+                    this.adv.style.display = 'block';
+                    this.adv.classList.add('animated', 'fadeInUp');
+                }, 3000);
+            } else {
+                clearTimeout(this.timeout);
+                this.adv.style.display = 'none';
+                this.adv.classList.remove('animated', 'fadeInUp');
+            }
     }
 }
 

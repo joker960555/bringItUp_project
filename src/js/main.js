@@ -11,9 +11,19 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const sliderMainShowup = new SliderMain({
         container: '.page',
-        buttons: '.next'
+        buttonsNext: '.sidecontrol__controls .next',
+        firstPageToggle: '.sidecontrol > a'
     });
     sliderMainShowup.render();
+    const sliderModulePageSlides = new SliderMain({  //Second Page pages modules
+        container: '.moduleapp',
+        buttons: '.sidecontrol__controls .next',
+        buttonsNext: '.nextmodule',
+        buttonsPrev: '.prevmodule',
+        firstPageToggle: '.sidecontrol > a'
+    });
+    sliderModulePageSlides.render();
+
     const sliderMiniShowup = new SliderMini({
         container: '.showup__content-slider',
         prev: '.showup__prev',
@@ -69,7 +79,7 @@ window.addEventListener('DOMContentLoaded', () => {
         trigger: '.btn'
     });
     formSchedule.render();
-
+    
     const phoneMask = new Mask('.form__block #phone');
     phoneMask.init();
 

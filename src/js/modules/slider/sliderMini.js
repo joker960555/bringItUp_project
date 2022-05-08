@@ -5,18 +5,20 @@ export default class SliderMini extends Slider {
     }
 
     render () {
-        this.container.style.cssText = `
+        try{
+            this.container.style.cssText = `
             display: flex;
             flex-wrap: wrap;
             overflow: hidden;
             align-items: flex-start;
-        `;
-        this.activeSlide();
-        this.decorateSlide();
-        this.toggleButtons();
-        if (this.autoplay) {
-            this.autoSlides();
-        }
+            `;
+            this.activeSlide();
+            this.decorateSlide();
+            this.toggleButtons();
+            if (this.autoplay) {
+                this.autoSlides();
+            }
+        }catch(e){}
     }
 
     activeSlide () {

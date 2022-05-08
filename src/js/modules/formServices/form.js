@@ -6,23 +6,26 @@ export default class Form {
         trigger = null,
         
     } = {}) {
-        this.form = document.querySelector(form);
-        this.inputs = this.form.querySelectorAll(inputs);
-        this.select = this.form.querySelector(select);
-        this.trigger = this.form.querySelector(trigger);
-        this.message = {
-            loading: "Wait, untill it's done!",
-            empty: "Please, fill the empty fields!",
-            success: "Congrats, you have succeded!",
-            failure: "Oops, something went wrong!"
-        };
-        this.stopSubmit = false;
-
+        try{
+            this.form = document.querySelector(form);
+            this.inputs = this.form.querySelectorAll(inputs);
+            this.select = this.form.querySelector(select);
+            this.trigger = this.form.querySelector(trigger);
+            this.message = {
+                loading: "Wait, untill it's done!",
+                empty: "Please, fill the empty fields!",
+                success: "Congrats, you have succeded!",
+                failure: "Oops, something went wrong!"
+            };
+            this.stopSubmit = false;
+        }catch(e){}
     }
 
     render () {
-        this.submitData();
-        this.blurFocusAlerts();
+        try{
+            this.submitData();
+            this.blurFocusAlerts();
+        }catch(e){}
     }
 
     createMessageBlock (result) {
@@ -57,39 +60,48 @@ export default class Form {
 
     blurFocusAlerts () {
         this.inputs.forEach(input => {
-            input.addEventListener('blur', (e) => {
-                if (e.target && e.target.value === '' && !e.target.classList.contains('empty')) {
-                    e.target.value = this.message.empty;
-                    e.target.style.border = 'thick solid red';
-                    e.target.style.backgroundColor = 'rgba(255, 0, 0, 0.4)';
-                    e.target.classList.add('empty');
+            input.addEventListener('blur', (event) => {
+                let e = event.target;
+                if (e && (e.value === '' || (e.value.length < 18 && 
+                    e.matches('#phone'))) && !e.classList.contains('empty')) {
+                        e.style.border = 'thick solid red';
+                        e.style.backgroundColor = 'rgba(255, 0, 0, 0.4)';
+                        e.classList.add('empty');
                 }
             });
-            input.addEventListener('focus', (e) => {
-                if ((e.target && e.target.classList.contains('empty'))) {
-                    e.target.classList.remove('empty');
-                    e.target.style.border = 'none';
-                    e.target.style.backgroundColor = '';
-                    e.target.value = '';
+            input.addEventListener('focus', (event) => {
+                const e = event.target;
+                console.log(e.value.length, event.type);
+                if ((e && e.classList.contains('empty') &&  !e.matches('#phone'))) {
+                    e.classList.remove('empty');
+                    e.style.border = 'none';
+                    e.style.backgroundColor = '';
+                    e.value = '';
+                }
+                if (e && e.matches('#phone') && e.classList.contains('empty')) {
+                    e.classList.remove('empty');
+                    e.style.border = 'none';
+                    e.style.backgroundColor = '';
                 }
             });
         });
     }
 
     emptyFormSubmitAlerts () {
-        let counter = 0;
-        for (let i = 0; i <= this.inputs.length - 1; i++) {
-            if (this.inputs[i].value === '') {
-                this.inputs[i].style.border = 'thick solid red';
-                this.inputs[i].style.backgroundColor = 'rgba(255, 0, 0, 0.4)';
-                this.inputs[i].classList.add('empty');
+        let counter = 0,
+            inp = this.inputs;
+        for (let i = 0; i <= inp.length - 1; i++) {
+            if (inp[i].value === '' || (inp[i].matches('#phone') &&
+                inp[i].value.length < 18)) {
+                inp[i].style.border = 'thick solid red';
+                inp[i].style.backgroundColor = 'rgba(255, 0, 0, 0.4)';
+                inp[i].classList.add('empty');
                 this.stopSubmit = true;
             }
-            if (this.inputs[i].value !== '') {
+            if ((!inp[i].matches('#phone') && inp[i].value !== '') ||
+                (inp[i].matches('#phone') && inp[i].value.length === 18)) {
                 counter++;
-                console.log(counter, i);
-                if (this.inputs.length === counter) {
-                    console.log(777, counter);
+                if (inp.length === counter) {
                     this.stopSubmit = false;
                 }
             }
@@ -99,13 +111,11 @@ export default class Form {
     submitData () {
         this.trigger.addEventListener('click', (event) => {
             event.preventDefault();
-            console.log(this);
             let formData = new FormData();
             this.inputs.forEach((input, i) => {
                 formData.append(i, input.value);
                 if (i === this.inputs.length - 1 && this.select) {
                     formData.append(i + 1, this.select.value);
-                    console.log(this.select.value, 12349876);
                 }
             });
             this.createMessageBlock(this.message.loading);

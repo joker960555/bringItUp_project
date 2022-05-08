@@ -4,15 +4,19 @@ export default class DifferenceCards {
         cards = null,
         trigger = null
     } = {}) {
-        this.container = document.querySelector(container);
-        this.cards = this.container.querySelectorAll(cards);
-        this.addCard = this.container.lastElementChild;
-        this.trigger = this.container.querySelector(trigger);
+        try{
+            this.container = document.querySelector(container);
+            this.cards = this.container.querySelectorAll(cards);
+            this.addCard = this.container.lastElementChild;
+            this.trigger = this.container.querySelector(trigger);
+        }catch(e){}
     }
 
     render () {
-        this.hideCards();
-        this.triggerCard();
+        try{
+            this.hideCards();
+            this.triggerCard();
+        }catch(e){}
     }
 
     hideCards () {
