@@ -1,51 +1,81 @@
 export default class Player {
-    constructor (triggerSel, overlaySel, closeSel) {
-        this.triggers = document.querySelectorAll(triggerSel),
-        this.overlay = document.querySelector(overlaySel),
-        this.close = this.overlay.querySelector(closeSel);
+    constructor ({buttons = null, overlay = null} = {}) {
+        this.buttons = document.querySelectorAll(buttons);
+        this.overlay = document.querySelector(overlay);
+        try{
+            this.close = this.overlay.querySelector('.close'); 
+            this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
+        }catch(e){}
+    
     }
 
     play () {
-        this.createAPIBlock();
-        this.triggerButton();
-        this.closeButton();
+        this.openVideo();
+        this.closeVideo();
+        this.loadAPI();
     }
 
-    createAPIBlock () {
+    loadAPI () {
         const tag = document.createElement('script');
-
         tag.src = "https://www.youtube.com/iframe_api";
         const firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     }
 
-    createPlayer (path) {
-        this.overlay.style.display = 'flex';
+    onPlayerStateChange (event) {
+        if (event.data === 0) {
+            this.locked.style.opacity = 1;
+            this.locked.style.filter = 'none';
+            this.newBtn = this.locked.querySelector('.play__circle');
+            this.newBtn.classList.remove('closed');
+            this.newBtn.querySelector('svg').remove();
+            this.newBtn.append(this.svg);
+            this.newBtn.nextElementSibling.classList.remove('attention');
+            this.newBtn.nextElementSibling.textContent = 'play video';
+            this.newBtn.parentNode.setAttribute('data-closed', 'false');
+        }
+    }
 
+    onYouTubeIframeAPIReady(path) {
         this.player = new YT.Player('frame', {
             height: '100%',
             width: '100%',
-            videoId: `${path}`
-          });
+            videoId: `${path}`,
+            events: {
+                'onStateChange': this.onPlayerStateChange
+            }
+        });
     }
 
-    triggerButton () {
-        this.triggers.forEach(item => {
-            item.addEventListener('click', () => {
-                if (document.querySelector('iframe#frame')) {
-                    this.overlay.style.display = 'flex';
-                } else {
-                    const path = item.parentNode.getAttribute('data-url');
-                    this.createPlayer(path);
+    openVideo() {
+        this.buttons.forEach((btn, i) => {
+            if (i % 2 !== 0) {
+                btn.setAttribute('data-closed', 'true');
+            }
+            btn.addEventListener('click', (e) => {
+                if (btn.getAttribute('data-closed') !== 'true') {
+                    try{
+                        this.path = btn.getAttribute('data-url');
+                        this.locked = btn.closest('.module__video-item').nextElementSibling;
+                        this.svg = btn.querySelector('svg').cloneNode(true);
+                    }catch(e){}
+                    if (this.overlay.querySelector('iframe')) {
+                        this.overlay.style.display = 'flex';
+                        this.player.loadVideoById({videoId: `${this.path}`});
+                    } else {
+                        this.overlay.style.display = 'flex';
+                        this.onYouTubeIframeAPIReady(this.path);
+                    }
                 }
             });
         });
     }
 
-    closeButton () {
-        this.close.addEventListener('click', () => {
+    closeVideo() {
+        this.close.addEventListener('click', (e) => {
             this.overlay.style.display = 'none';
-            this.player.stopVideo();
+            try{ this.player.stopVideo(); }catch(e){}
         });
     }
+
 }

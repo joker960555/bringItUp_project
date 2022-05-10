@@ -5,6 +5,8 @@ import DifferenceCards from './modules/differenceBlock/differenceCards';
 import Form from './modules/formServices/form';
 import Mask from './modules/formServices/mask';
 import FilterInputs from './modules/formServices/inputFilter';
+import ShowInfo from './modules/accordeon';
+import Download from './modules/download';
 
 window.addEventListener('DOMContentLoaded', () => {
     'use strict';
@@ -47,10 +49,18 @@ window.addEventListener('DOMContentLoaded', () => {
         next: '.feed__slider .slick-next',
         active: 'feed__item-active'
     });
-    sliderMiniFeed.render();
+    sliderMiniFeed.render(); 
 
-    const player = new Player('.play__circle', '.overlay', '.close');
-    player.play();
+    const videoPlayerFirstPage = new Player({
+        buttons: '.showup__video .play',
+        overlay: '.overlay'
+    });
+    videoPlayerFirstPage.play();
+    const videoPlayerSecondPage = new Player({
+        buttons: '.module__video-item .play',
+        overlay: '.overlay'
+    });
+    videoPlayerSecondPage.play();
 
     const oldCards = new DifferenceCards({
         container: '.officerold',
@@ -86,4 +96,11 @@ window.addEventListener('DOMContentLoaded', () => {
     const emailFilter = new FilterInputs('input[name="email"]');
     emailFilter.init();
 
+    const accordeon = new ShowInfo({
+        triggers: '.module__info .plus',
+        contents: '.module__info .msg'
+    });
+    accordeon.render();
+
+    new Download({triggers: '.download'}).init();
 });
